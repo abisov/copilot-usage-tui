@@ -1,3 +1,4 @@
+#!/usr/bin/env bun
 import { App } from "./ui/app.ts"
 
 async function main() {

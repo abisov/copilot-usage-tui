@@ -20,10 +20,31 @@ A terminal UI for viewing your GitHub Copilot premium request usage.
 
 ## Installation
 
+### Quick run (no install)
+
+```bash
+bunx copilot-usage-tui
+```
+
+### Install globally
+
+```bash
+bun install -g copilot-usage-tui
+```
+
+Then run:
+
+```bash
+copilot-usage-tui
+```
+
+### From source
+
 ```bash
 git clone https://github.com/abisov/copilot-usage-tui.git
 cd copilot-usage-tui
 bun install
+bun run start
 ```
 
 ## Setup
@@ -35,10 +56,6 @@ gh auth refresh -h github.com -s user
 ```
 
 ## Usage
-
-```bash
-bun run start
-```
 
 On first run, you'll be prompted to select your Copilot plan to set your monthly quota.
 
