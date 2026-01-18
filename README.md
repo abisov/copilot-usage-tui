@@ -2,6 +2,7 @@
 
 A terminal UI for viewing your GitHub Copilot premium request usage.
 
+[![npm version](https://img.shields.io/npm/v/copilot-usage-tui.svg)](https://www.npmjs.com/package/copilot-usage-tui)
 ![Tokyo Night themed](https://img.shields.io/badge/theme-Tokyo%20Night-7aa2f7)
 
 ## Features
