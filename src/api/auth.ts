@@ -126,7 +126,8 @@ export function getAuthInstructions(status: AuthStatus): string[] {
     return [
       "GitHub CLI is not authenticated.",
       "",
-      "Run this command in your terminal:",
+      "Press [a] to authenticate with GitHub,",
+      "or run manually in your terminal:",
       "  gh auth login",
       "",
       "Then press [r] to retry.",
@@ -137,7 +138,8 @@ export function getAuthInstructions(status: AuthStatus): string[] {
     return [
       "GitHub CLI is missing the required 'user' scope.",
       "",
-      "Run this command in your terminal:",
+      "Press [a] to add the required scope,",
+      "or run manually in your terminal:",
       "  gh auth refresh -h github.com -s user",
       "",
       "Then press [r] to retry.",
@@ -145,4 +147,40 @@ export function getAuthInstructions(status: AuthStatus): string[] {
   }
   
   return ["Authentication successful!"]
+}
+
+/**
+ * Run gh auth refresh interactively
+ * Returns true if the command was successful
+ */
+export async function runAuthRefresh(): Promise<boolean> {
+  try {
+    const proc = Bun.spawn(["gh", "auth", "refresh", "-h", "github.com", "-s", "user"], {
+      stdin: "inherit",
+      stdout: "inherit",
+      stderr: "inherit",
+    })
+    const exitCode = await proc.exited
+    return exitCode === 0
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Run gh auth login interactively
+ * Returns true if the command was successful
+ */
+export async function runAuthLogin(): Promise<boolean> {
+  try {
+    const proc = Bun.spawn(["gh", "auth", "login", "-h", "github.com", "-s", "user"], {
+      stdin: "inherit",
+      stdout: "inherit",
+      stderr: "inherit",
+    })
+    const exitCode = await proc.exited
+    return exitCode === 0
+  } catch {
+    return false
+  }
 }

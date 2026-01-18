@@ -5,7 +5,7 @@ import {
 } from "@opentui/core"
 import type { ViewState, Config, UsageSummary, AuthStatus } from "../types.ts"
 import { hasConfig, loadConfig } from "../config/config.ts"
-import { checkAuth } from "../api/auth.ts"
+import { checkAuth, runAuthRefresh, runAuthLogin } from "../api/auth.ts"
 import { getUsageSummary, getUsername } from "../api/github.ts"
 import { SetupScreen } from "./screens/setup.ts"
 import { AuthScreen } from "./screens/auth.ts"
@@ -129,6 +129,9 @@ export class App {
       onRetry: async () => {
         await this.checkAuthAndProceed()
       },
+      onAuthenticate: async () => {
+        await this.runInteractiveAuth()
+      },
     })
   }
 
@@ -177,6 +180,48 @@ export class App {
     }
   }
 
+  private async runInteractiveAuth() {
+    // Destroy the TUI to give control back to the terminal
+    this.clearCurrentScreen()
+    this.renderer.destroy()
+
+    console.log("\n")
+
+    // Run the appropriate auth command based on current status
+    let success: boolean
+    if (this.authStatus?.authenticated) {
+      // Already authenticated, just need to add scope
+      success = await runAuthRefresh()
+    } else {
+      // Need full login
+      success = await runAuthLogin()
+    }
+
+    console.log("\n")
+    if (success) {
+      console.log("Authentication successful! Restarting...")
+    } else {
+      console.log("Authentication failed or was cancelled. Restarting...")
+    }
+
+    // Small delay to let user see the message
+    await new Promise(resolve => setTimeout(resolve, 1000))
+
+    // Restart the app
+    const newRenderer = await createCliRenderer({
+      exitOnCtrlC: true,
+    })
+    this.renderer = newRenderer
+
+    // Re-setup keyboard handler
+    this.renderer.keyInput.on("keypress", (event: KeyEvent) => {
+      this.handleKeyPress(event)
+    })
+
+    // Check auth again and proceed
+    await this.checkAuthAndProceed()
+  }
+
   private handleKeyPress(event: KeyEvent) {
     // Handle setup screen key events
     if (this.currentView === "setup" && this.setupScreen) {
@@ -197,6 +242,12 @@ export class App {
           this.checkAuthAndProceed()
         } else if (this.currentView === "dashboard") {
           this.refresh()
+        }
+        break
+
+      case "a":
+        if (this.currentView === "auth") {
+          this.runInteractiveAuth()
         }
         break
 

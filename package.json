@@ -1,6 +1,6 @@
 {
   "name": "copilot-usage-tui",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Terminal UI for viewing GitHub Copilot premium request usage",
   "type": "module",
   "bin": {

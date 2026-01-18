@@ -9,6 +9,7 @@ import { getAuthInstructions } from "../../api/auth.ts"
 export interface AuthScreenOptions {
   authStatus: AuthStatus
   onRetry: () => void
+  onAuthenticate: () => void
 }
 
 export class AuthScreen {
@@ -92,7 +93,7 @@ export class AuthScreen {
     // Keybindings hint
     const hint = new TextRenderable(this.renderer, {
       id: "auth-hint",
-      content: "[r] Retry   [q] Quit",
+      content: "[a] Authenticate   [r] Retry   [q] Quit",
       fg: THEME.fgMuted,
     })
     contentBox.add(hint)
